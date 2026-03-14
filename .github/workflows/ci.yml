@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  zig:
+    name: Zig build and smoke tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Zig
+        uses: mlugg/setup-zig@v1
+        with:
+          version: "0.15.2"
+
+      - name: Zig version
+        run: zig version
+
+      - name: Run tests
+        run: zig build test
+
+      - name: CLI smoke tests
+        run: |
+          zig build run -- version
+          zig build run -- help
+          zig build run -- doctor
+          zig build run -- deploy --no-push
+
+      - name: Build release artifacts
+        run: |
+          chmod +x scripts/build-release.sh
+          ./scripts/build-release.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vessel-dist
+          path: dist/
+          if-no-files-found: error
+
+  hosted-elixir:
+    name: Hosted control API compile check
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: hosted/control_api
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup BEAM
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.17.3"
+          otp-version: "27.1"
+
+      - name: Fetch deps
+        run: mix deps.get
+
+      - name: Compile
+        run: mix compile --warnings-as-errors
+
