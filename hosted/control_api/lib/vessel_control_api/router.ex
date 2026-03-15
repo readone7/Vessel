@@ -22,4 +22,3 @@ defmodule VesselControlApi.Router do
     send_resp(conn, 404, "not found")
   end
 end
-

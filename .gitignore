@@ -1,0 +1,32 @@
+# macOS / editor noise
+.DS_Store
+.idea/
+.vscode/
+
+# Environment / local overrides
+.env
+.env.*
+!.env.example
+*.local
+
+# Zig build artifacts and caches
+.zig-cache/
+zig-out/
+
+# Release artifacts
+dist/
+
+# Logs / temp files
+*.log
+*.tmp
+*.swp
+
+# Elixir / Mix build artifacts
+hosted/control_api/_build/
+hosted/control_api/deps/
+hosted/control_api/.elixir_ls/
+hosted/control_api/erl_crash.dump
+
+# Optional node/npm outputs if added later
+node_modules/
+

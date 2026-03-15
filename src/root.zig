@@ -5,6 +5,7 @@ pub const cli = @import("vessel/cli.zig");
 pub const config = @import("vessel/config.zig");
 pub const orchestrator = @import("vessel/orchestrator.zig");
 pub const transport = @import("vessel/transport.zig");
+pub const io = @import("vessel/io.zig");
 pub const docker = @import("vessel/docker.zig");
 pub const ingress = @import("vessel/ingress.zig");
 pub const health = @import("vessel/health.zig");

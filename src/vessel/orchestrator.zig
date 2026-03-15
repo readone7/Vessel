@@ -5,6 +5,7 @@ const docker = @import("docker.zig");
 const ingress = @import("ingress.zig");
 const health = @import("health.zig");
 const state = @import("state.zig");
+const io = @import("io.zig");
 
 pub fn runInit(allocator: std.mem.Allocator, args: []const []const u8) !void {
     if (args.len < 1) return error.MissingTarget;
@@ -28,8 +29,7 @@ pub fn runDeploy(allocator: std.mem.Allocator, args: []const []const u8) !void {
     try health.waitUntilHealthy(allocator, gate, plan.service_name);
     try ingress.ensureRoutes(allocator, plan.service_name, deploy_cfg.domain);
 
-    const out = std.io.getStdOut().writer();
-    try out.print("deployed {s} to {s}\n", .{ plan.service_name, deploy_cfg.target_host });
+    try io.stdoutPrint("deployed {s} to {s}\n", .{ plan.service_name, deploy_cfg.target_host });
 }
 
 pub fn runPush(allocator: std.mem.Allocator, args: []const []const u8) !void {
@@ -41,15 +41,13 @@ pub fn runPush(allocator: std.mem.Allocator, args: []const []const u8) !void {
 pub fn runLogs(allocator: std.mem.Allocator, args: []const []const u8) !void {
     _ = allocator;
     if (args.len < 1) return error.MissingService;
-    const out = std.io.getStdOut().writer();
-    try out.print("logs fan-out is scaffolded for service {s}\n", .{args[0]});
+    try io.stdoutPrint("logs fan-out is scaffolded for service {s}\n", .{args[0]});
 }
 
 pub fn runRollback(allocator: std.mem.Allocator, args: []const []const u8) !void {
     _ = allocator;
     _ = args;
-    const out = std.io.getStdOut().writer();
-    try out.writeAll("rollback scaffold: uses rolling path + health gates\n");
+    try io.stdoutPrint("rollback scaffold: uses rolling path + health gates\n", .{});
 }
 
 pub fn runDoctor(allocator: std.mem.Allocator, args: []const []const u8) !void {
@@ -60,15 +58,13 @@ pub fn runDoctor(allocator: std.mem.Allocator, args: []const []const u8) !void {
 pub fn runDiff(allocator: std.mem.Allocator, args: []const []const u8) !void {
     _ = allocator;
     _ = args;
-    const out = std.io.getStdOut().writer();
-    try out.writeAll("diff scaffold: desired vs actual drift view\n");
+    try io.stdoutPrint("diff scaffold: desired vs actual drift view\n", .{});
 }
 
 pub fn runRepair(allocator: std.mem.Allocator, args: []const []const u8) !void {
     _ = allocator;
     _ = args;
-    const out = std.io.getStdOut().writer();
-    try out.writeAll("repair scaffold: run guided remediations\n");
+    try io.stdoutPrint("repair scaffold: run guided remediations\n", .{});
 }
 
 const DeployOptions = struct {

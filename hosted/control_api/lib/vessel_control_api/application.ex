@@ -5,10 +5,9 @@ defmodule VesselControlApi.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Plug.Cowboy, scheme: :http, plug: VesselControlApi.Router, options: [port: 4315]}
+      {Bandit, plug: VesselControlApi.Router, scheme: :http, port: 4315}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: VesselControlApi.Supervisor)
   end
 end
-

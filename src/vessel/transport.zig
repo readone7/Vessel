@@ -1,10 +1,10 @@
 const std = @import("std");
+const io = @import("io.zig");
 
 pub fn bootstrapMachine(allocator: std.mem.Allocator, target: []const u8) !void {
-    const out = std.io.getStdOut().writer();
-    try out.print("bootstrapping {s}\n", .{target});
+    try io.stdoutPrint("bootstrapping {s}\n", .{target});
     try run(allocator, &.{ "ssh", target, "echo vessel bootstrap check" });
-    try out.writeAll("bootstrap scaffold complete (install/start vesseld)\n");
+    try io.stdoutPrint("bootstrap scaffold complete (install/start vesseld)\n", .{});
 }
 
 pub fn run(allocator: std.mem.Allocator, argv: []const []const u8) !void {

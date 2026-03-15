@@ -1,4 +1,5 @@
 const std = @import("std");
+const io = @import("io.zig");
 
 pub const ProbeKind = enum {
     docker_healthcheck,
@@ -28,8 +29,7 @@ pub fn defaultGateModel() GateModel {
 
 pub fn waitUntilHealthy(allocator: std.mem.Allocator, model: GateModel, service: []const u8) !void {
     _ = allocator;
-    const out = std.io.getStdOut().writer();
-    try out.print(
+    try io.stdoutPrint(
         "health gate ({any}, retries={d}) passed for {s}\n",
         .{ model.precedence, model.retries, service },
     );
@@ -37,12 +37,11 @@ pub fn waitUntilHealthy(allocator: std.mem.Allocator, model: GateModel, service:
 
 pub fn runDoctor(allocator: std.mem.Allocator) !void {
     _ = allocator;
-    const out = std.io.getStdOut().writer();
-    try out.writeAll("doctor checks:\n");
-    try out.writeAll("- ssh connectivity\n");
-    try out.writeAll("- vesseld health endpoint\n");
-    try out.writeAll("- caddy admin endpoint\n");
-    try out.writeAll("- docker daemon availability\n");
+    try io.stdoutPrint("doctor checks:\n", .{});
+    try io.stdoutPrint("- ssh connectivity\n", .{});
+    try io.stdoutPrint("- vesseld health endpoint\n", .{});
+    try io.stdoutPrint("- caddy admin endpoint\n", .{});
+    try io.stdoutPrint("- docker daemon availability\n", .{});
 }
 
 test "default precedence starts with docker healthcheck" {

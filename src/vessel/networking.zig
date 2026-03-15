@@ -1,12 +1,11 @@
 const std = @import("std");
+const io = @import("io.zig");
 
 pub fn joinNode(machine: []const u8) !void {
-    const out = std.io.getStdOut().writer();
-    try out.print("network scaffold join: {s}\n", .{machine});
+    try io.stdoutPrint("network scaffold join: {s}\n", .{machine});
 }
 
 pub fn ensureMesh() !void {
-    const out = std.io.getStdOut().writer();
-    try out.writeAll("wireguard mesh scaffold\n");
+    try io.stdoutPrint("wireguard mesh scaffold\n", .{});
 }
 

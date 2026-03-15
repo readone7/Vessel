@@ -1,6 +1,7 @@
 const std = @import("std");
 const version = @import("version.zig");
 const orchestrator = @import("orchestrator.zig");
+const io = @import("io.zig");
 
 pub const Command = enum {
     init,
@@ -49,13 +50,11 @@ pub fn run(allocator: std.mem.Allocator) !void {
 }
 
 fn printVersion() !void {
-    const out = std.io.getStdOut().writer();
-    try out.print("vessel {s}\n", .{version.semver});
+    try io.stdoutPrint("vessel {s}\n", .{version.semver});
 }
 
 fn printHelp() !void {
-    const out = std.io.getStdOut().writer();
-    try out.print(
+    try io.stdoutPrint(
         \\vessel commands:
         \\  init <user@host>           Bootstrap a machine with vesseld
         \\  deploy [--no-push]         Deploy from compose.yaml and vessel.toml

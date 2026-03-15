@@ -47,7 +47,7 @@ jobs:
           if-no-files-found: error
 
   hosted-elixir:
-    name: Hosted control API compile check
+    name: Hosted control API compile and Credo
     runs-on: ubuntu-latest
 
     defaults:
@@ -69,4 +69,7 @@ jobs:
 
       - name: Compile
         run: mix compile --warnings-as-errors
+
+      - name: Credo (strict)
+        run: mix credo --strict
 

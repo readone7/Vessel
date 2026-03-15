@@ -22,8 +22,9 @@ defmodule VesselControlApi.MixProject do
     [
       {:phoenix, "~> 1.7"},
       {:phoenix_pubsub, "~> 2.1"},
-      {:plug_cowboy, "~> 2.7"},
-      {:jason, "~> 1.4"}
+      {:bandit, "~> 1.5"},
+      {:jason, "~> 1.4"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 end

@@ -1,10 +1,10 @@
-const std = @import("std");
+const io = @import("io.zig");
 
 pub fn info(comptime fmt: []const u8, args: anytype) void {
-    std.debug.print("[INFO] " ++ fmt ++ "\n", args);
+    io.stdoutPrint("[INFO] " ++ fmt ++ "\n", args) catch {};
 }
 
 pub fn warn(comptime fmt: []const u8, args: anytype) void {
-    std.debug.print("[WARN] " ++ fmt ++ "\n", args);
+    io.stderrPrint("[WARN] " ++ fmt ++ "\n", args) catch {};
 }
 
