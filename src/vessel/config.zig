@@ -1,4 +1,6 @@
 const std = @import("std");
+const toml = @import("toml");
+const logging = @import("logging.zig");
 
 pub const ProjectConfig = struct {
     project_name: []const u8,
@@ -16,9 +18,6 @@ pub const ProjectConfig = struct {
 
 pub fn loadProjectConfig(allocator: std.mem.Allocator) !ProjectConfig {
     const cwd = std.fs.cwd();
-
-    // ADR-backed config model: compose.yaml + vessel.toml. For now we parse a
-    // minimal key=value subset from vessel.toml and use defaults when absent.
     const maybe_content = cwd.readFileAlloc(allocator, "vessel.toml", 1024 * 64) catch null;
     defer if (maybe_content) |content| allocator.free(content);
 
@@ -28,27 +27,55 @@ pub fn loadProjectConfig(allocator: std.mem.Allocator) !ProjectConfig {
     var image = try allocator.dupe(u8, "vessel-app:latest");
 
     if (maybe_content) |content| {
-        var lines = std.mem.tokenizeScalar(u8, content, '\n');
-        while (lines.next()) |line| {
-            const trimmed = std.mem.trim(u8, line, " \t\r");
-            if (trimmed.len == 0 or trimmed[0] == '#') continue;
-            var split = std.mem.splitScalar(u8, trimmed, '=');
-            const key = std.mem.trim(u8, split.first(), " \t");
-            const value_raw = split.next() orelse continue;
-            const value = trimQuotes(std.mem.trim(u8, value_raw, " \t"));
+        var structured_parser = toml.Parser(StructuredConfig).init(allocator);
+        defer structured_parser.deinit();
 
-            if (std.mem.eql(u8, key, "project")) {
+        if (structured_parser.parseString(content)) |structured_result| {
+            defer structured_result.deinit();
+            const parsed = structured_result.value;
+            if (parsed.project) |proj| {
+                if (proj.name) |value| {
+                    allocator.free(project_name);
+                    project_name = try allocator.dupe(u8, value);
+                }
+            }
+            if (parsed.deploy) |dep| {
+                if (dep.image) |value| {
+                    allocator.free(image);
+                    image = try allocator.dupe(u8, value);
+                }
+                if (chooseFirst(dep.target_host, dep.target_hosts)) |value| {
+                    allocator.free(target_host);
+                    target_host = try allocator.dupe(u8, value);
+                }
+                if (chooseFirst(dep.domain, dep.domains)) |value| {
+                    allocator.free(domain);
+                    domain = try allocator.dupe(u8, value);
+                }
+            }
+        } else |_| {
+            logging.warn("vessel.toml: structured parse failed, trying flat key format", .{});
+            var flat_parser = toml.Parser(FlatConfig).init(allocator);
+            defer flat_parser.deinit();
+            var flat_result = try flat_parser.parseString(content);
+            defer flat_result.deinit();
+            const parsed = flat_result.value;
+
+            if (parsed.project) |value| {
                 allocator.free(project_name);
                 project_name = try allocator.dupe(u8, value);
-            } else if (std.mem.eql(u8, key, "target_host")) {
-                allocator.free(target_host);
-                target_host = try allocator.dupe(u8, value);
-            } else if (std.mem.eql(u8, key, "domain")) {
-                allocator.free(domain);
-                domain = try allocator.dupe(u8, value);
-            } else if (std.mem.eql(u8, key, "image")) {
+            }
+            if (parsed.image) |value| {
                 allocator.free(image);
                 image = try allocator.dupe(u8, value);
+            }
+            if (chooseFirst(parsed.target_host, parsed.target_hosts)) |value| {
+                allocator.free(target_host);
+                target_host = try allocator.dupe(u8, value);
+            }
+            if (chooseFirst(parsed.domain, parsed.domains)) |value| {
+                allocator.free(domain);
+                domain = try allocator.dupe(u8, value);
             }
         }
     }
@@ -61,12 +88,39 @@ pub fn loadProjectConfig(allocator: std.mem.Allocator) !ProjectConfig {
     };
 }
 
-fn trimQuotes(value: []const u8) []const u8 {
-    if (value.len >= 2 and value[0] == '"' and value[value.len - 1] == '"') {
-        return value[1 .. value.len - 1];
+fn chooseFirst(single: ?[]const u8, many: ?[]const []const u8) ?[]const u8 {
+    if (single) |value| return value;
+    if (many) |slice| {
+        if (slice.len > 0) return slice[0];
     }
-    return value;
+    return null;
 }
+
+const ProjectSection = struct {
+    name: ?[]const u8 = null,
+};
+
+const DeploySection = struct {
+    image: ?[]const u8 = null,
+    target_host: ?[]const u8 = null,
+    target_hosts: ?[]const []const u8 = null,
+    domain: ?[]const u8 = null,
+    domains: ?[]const []const u8 = null,
+};
+
+const StructuredConfig = struct {
+    project: ?ProjectSection = null,
+    deploy: ?DeploySection = null,
+};
+
+const FlatConfig = struct {
+    project: ?[]const u8 = null,
+    image: ?[]const u8 = null,
+    target_host: ?[]const u8 = null,
+    target_hosts: ?[]const []const u8 = null,
+    domain: ?[]const u8 = null,
+    domains: ?[]const []const u8 = null,
+};
 
 test "parse minimal vessel toml style" {
     const sample =
@@ -75,6 +129,30 @@ test "parse minimal vessel toml style" {
         \\domain = "demo.example.com"
         \\image = "demo:1"
     ;
-    _ = sample;
+    var parser = toml.Parser(FlatConfig).init(std.testing.allocator);
+    defer parser.deinit();
+    var parsed = try parser.parseString(sample);
+    defer parsed.deinit();
+    try std.testing.expect(std.mem.eql(u8, parsed.value.project.?, "demo"));
+}
+
+test "parse section keys and arrays" {
+    const sample =
+        \\[project]
+        \\name = "demo"
+        \\
+        \\[deploy]
+        \\target_hosts = ["root@1.2.3.4", "root@2.3.4.5"]
+        \\domains = ["demo.example.com", "backup.example.com"]
+        \\image = "demo:2"
+    ;
+    var parser = toml.Parser(StructuredConfig).init(std.testing.allocator);
+    defer parser.deinit();
+    var parsed = try parser.parseString(sample);
+    defer parsed.deinit();
+
+    const dep = parsed.value.deploy.?;
+    try std.testing.expect(std.mem.eql(u8, chooseFirst(dep.target_host, dep.target_hosts).?, "root@1.2.3.4"));
+    try std.testing.expect(std.mem.eql(u8, chooseFirst(dep.domain, dep.domains).?, "demo.example.com"));
 }
 

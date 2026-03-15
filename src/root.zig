@@ -5,6 +5,7 @@ pub const cli = @import("vessel/cli.zig");
 pub const config = @import("vessel/config.zig");
 pub const orchestrator = @import("vessel/orchestrator.zig");
 pub const transport = @import("vessel/transport.zig");
+pub const runner = @import("vessel/runner.zig");
 pub const io = @import("vessel/io.zig");
 pub const docker = @import("vessel/docker.zig");
 pub const ingress = @import("vessel/ingress.zig");
@@ -18,4 +19,5 @@ pub const logging = @import("vessel/logging.zig");
 
 test "public API loads" {
     try std.testing.expect(version.semver.len > 0);
+    try std.testing.expect(docs.isKnownQuadrant("tutorials"));
 }

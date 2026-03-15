@@ -1,81 +1,52 @@
 const std = @import("std");
-const cfg = @import("config.zig");
-const transport = @import("transport.zig");
-const docker = @import("docker.zig");
-const ingress = @import("ingress.zig");
-const health = @import("health.zig");
-const state = @import("state.zig");
-const io = @import("io.zig");
+const cmd_init = @import("cmd/init.zig");
+const cmd_deploy = @import("cmd/deploy.zig");
+const cmd_push = @import("cmd/push.zig");
+const cmd_ps = @import("cmd/ps.zig");
+const cmd_docs = @import("cmd/docs.zig");
+const cmd_logs = @import("cmd/logs.zig");
+const cmd_rollback = @import("cmd/rollback.zig");
+const cmd_doctor = @import("cmd/doctor.zig");
+const cmd_diff = @import("cmd/diff.zig");
+const cmd_repair = @import("cmd/repair.zig");
 
 pub fn runInit(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    if (args.len < 1) return error.MissingTarget;
-    const target = args[0];
-    try transport.bootstrapMachine(allocator, target);
+    try cmd_init.run(allocator, args);
 }
 
 pub fn runDeploy(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    const deploy_cfg = try cfg.loadProjectConfig(allocator);
-    defer deploy_cfg.deinit(allocator);
-
-    const opts = DeployOptions.fromArgs(args);
-    var plan = try state.DeployPlan.fromConfig(allocator, deploy_cfg, opts);
-    defer plan.deinit(allocator);
-
-    if (!opts.no_push) {
-        try runPush(allocator, &.{ plan.image_ref, deploy_cfg.target_host });
-    }
-
-    const gate = health.defaultGateModel();
-    try health.waitUntilHealthy(allocator, gate, plan.service_name);
-    try ingress.ensureRoutes(allocator, plan.service_name, deploy_cfg.domain);
-
-    try io.stdoutPrint("deployed {s} to {s}\n", .{ plan.service_name, deploy_cfg.target_host });
+    try cmd_deploy.run(allocator, args);
 }
 
 pub fn runPush(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    _ = allocator;
-    if (args.len < 2) return error.MissingPushArgs;
-    try docker.pushViaTunnel(args[0], args[1]);
+    try cmd_push.run(allocator, args);
 }
 
 pub fn runLogs(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    _ = allocator;
-    if (args.len < 1) return error.MissingService;
-    try io.stdoutPrint("logs fan-out is scaffolded for service {s}\n", .{args[0]});
+    try cmd_logs.run(allocator, args);
+}
+
+pub fn runDocs(allocator: std.mem.Allocator, args: []const []const u8) !void {
+    try cmd_docs.run(allocator, args);
+}
+
+pub fn runPs(allocator: std.mem.Allocator, args: []const []const u8) !void {
+    try cmd_ps.run(allocator, args);
 }
 
 pub fn runRollback(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    _ = allocator;
-    _ = args;
-    try io.stdoutPrint("rollback scaffold: uses rolling path + health gates\n", .{});
+    try cmd_rollback.run(allocator, args);
 }
 
 pub fn runDoctor(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    _ = args;
-    try health.runDoctor(allocator);
+    try cmd_doctor.run(allocator, args);
 }
 
 pub fn runDiff(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    _ = allocator;
-    _ = args;
-    try io.stdoutPrint("diff scaffold: desired vs actual drift view\n", .{});
+    try cmd_diff.run(allocator, args);
 }
 
 pub fn runRepair(allocator: std.mem.Allocator, args: []const []const u8) !void {
-    _ = allocator;
-    _ = args;
-    try io.stdoutPrint("repair scaffold: run guided remediations\n", .{});
+    try cmd_repair.run(allocator, args);
 }
-
-const DeployOptions = struct {
-    no_push: bool = false,
-
-    fn fromArgs(args: []const []const u8) DeployOptions {
-        var out: DeployOptions = .{};
-        for (args) |arg| {
-            if (std.mem.eql(u8, arg, "--no-push")) out.no_push = true;
-        }
-        return out;
-    }
-};
 

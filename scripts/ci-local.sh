@@ -29,6 +29,9 @@ zig build run -- doctor
 echo "==> running deploy --no-push"
 zig build run -- deploy --no-push
 
+echo "==> running docs lint"
+zig build run -- docs lint
+
 echo "==> Local CI: Build release artifacts"
 chmod +x scripts/build-release.sh
 ./scripts/build-release.sh

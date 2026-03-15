@@ -1,9 +1,9 @@
 0
 15678 1686107 1760154801000000000 f0bdf7a0d76753ffab1319907ec69cf1 1 compiler/test_runner.zig
-867 7206013 1773532480445431583 63e08bd4d75308ae763c809455d5df7b 0 src/root.zig
+930 7206013 1773540677381357183 0d6e38ff6dfe7163bcc0e706acfeb339 0 src/root.zig
 22376 1705296 1760154801000000000 2d968f90418b6afe5ba91eaa2e18ba71 1 ubsan_rt.zig
 7957 1705225 1760154801000000000 0ebbb46b337b65e85e7d177cfc93d2ca 1 std/std.zig
-867 7206013 1773532480445431583 63e08bd4d75308ae763c809455d5df7b 0 /Users/rid/Desktop/Experiments/Vessel/src/root.zig
+930 7206013 1773540677381357183 0d6e38ff6dfe7163bcc0e706acfeb339 0 /Users/rid/Desktop/Experiments/Vessel/src/root.zig
 2525 1704680 1760154801000000000 71e0dabdb301ba10f8ca420941767e70 1 std/BitStack.zig
 100909 1704712 1760154801000000000 13a2e2104f4f0987e695d4e96ddf1e3d 1 std/Build.zig
 4266 1704792 1760154801000000000 16fdba428de22eb1305e855dec42f9a9 1 std/buf_map.zig
@@ -75,19 +75,19 @@
 28071 1705223 1760154801000000000 76d2b688d1d45fbb74ca560efdaac238 1 std/start.zig
 5929 1704928 1760154801000000000 a75e2588e1a73369810b6ba7657e4bfd 1 std/crypto/tlcsprng.zig
 33 7228509 1773513817095918851 e2e49e472278900e0c172b2511890d32 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/version.zig
-2740 7228550 1773532486867166562 52d1c43f13c505ff62877e9eb7e2e346 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/cli.zig
-2821 7228625 1773513857604807907 fc763e260ba01d738d96a5b8a61f6bdf 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/config.zig
-2705 7228588 1773532495233712795 ccd4809810ba1004eaa532053e9c8342 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/orchestrator.zig
+3257 7228550 1773541066624552970 e5ab48799d1ac19e535f3cfb8e217531 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/cli.zig
+4572 7228625 1773540659398043363 75a1db85b5efbe823ba959125a210882 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/config.zig
+3545 7228588 1773541073958102709 47cf9c2764cc50bf8a7364d670f58cf9 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/orchestrator.zig
 1376 7228672 1773532533718948103 31ec00b2cfb75a1cf2f0d056f41a439c 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/transport.zig
 529 7271240 1773532475706694054 db32a9ae80934c0241779a4490d1cb36 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/io.zig
 774 7228738 1773532524244238206 e3b95c0a0d289280882afae7552d036c 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/docker.zig
 270 7228777 1773532515708377468 6380d6afdb344693b956e79f98f57ca5 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/ingress.zig
 1339 7228828 1773532509970681661 15c0a35d8a9f420304b15bafd8b76a51 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/health.zig
-621 7228899 1773513894806184519 87dbd2d61032bd352d1e82162bc868c4 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/state.zig
+3362 7228899 1773540810656515453 c6ca0f65dd5fde7d948f38ef89950589 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/state.zig
 410 7230036 1773514077690561892 948f7fbc77bfa23cff386c3960f89bf8 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/protocol.zig
 264 7230064 1773532501716518474 56724ca50d995c09382b4441ec37b889 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/networking.zig
 558 7230098 1773514085320146401 ad29dbff82929aacfe6ecb84ebefc942 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/scheduler.zig
-54 7228930 1773513898952116258 4a3781c727d9eaa5892b0bf557a614b7 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/docs.zig
+2729 7228930 1773541088397173142 3c1af1c126e547b6cb745ec332490d7c 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/docs.zig
 279 7229083 1773532567933493194 55d9e5e1a99f8e12d027c6521b1561e1 0 /Users/rid/Desktop/Experiments/Vessel/src/vessel/logging.zig
 59803 1704686 1760154801000000000 b6406a99c6bcfa6765bfb08eafcbff0d 1 std/Build/Cache.zig
 38694 1704706 1760154801000000000 4bafc6be1344a4b0b4bfce1abc099568 1 std/Build/Step.zig

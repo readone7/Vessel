@@ -3,11 +3,19 @@ const std = @import("std");
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
+    const toml_dep = b.dependency("toml", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    const toml_mod = toml_dep.module("toml");
 
     const vessel_mod = b.addModule("vessel", .{
         .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
+        .imports = &.{
+            .{ .name = "toml", .module = toml_mod },
+        },
     });
 
     const vessel = b.addExecutable(.{
@@ -18,6 +26,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "vessel", .module = vessel_mod },
+                .{ .name = "toml", .module = toml_mod },
             },
         }),
     });
@@ -31,6 +40,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "vessel", .module = vessel_mod },
+                .{ .name = "toml", .module = toml_mod },
             },
         }),
     });
@@ -44,6 +54,7 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
             .imports = &.{
                 .{ .name = "vessel", .module = vessel_mod },
+                .{ .name = "toml", .module = toml_mod },
             },
         }),
     });

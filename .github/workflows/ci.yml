@@ -33,6 +33,7 @@ jobs:
           zig build run -- help
           zig build run -- doctor
           zig build run -- deploy --no-push
+          zig build run -- docs lint
 
       - name: Build release artifacts
         run: |

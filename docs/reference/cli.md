@@ -14,3 +14,7 @@
 - `vessel diff`
 - `vessel repair`
 
+## Local State Format
+
+Vessel stores local runtime state in `.vessel/state.json` (versioned JSON schema). This is now the only supported on-disk state format.
+

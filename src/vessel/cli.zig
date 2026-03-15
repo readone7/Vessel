@@ -7,6 +7,8 @@ pub const Command = enum {
     init,
     deploy,
     push,
+    ps,
+    docs,
     logs,
     rollback,
     doctor,
@@ -21,6 +23,8 @@ pub fn parseCommand(arg: ?[]const u8) Command {
     if (std.mem.eql(u8, value, "init")) return .init;
     if (std.mem.eql(u8, value, "deploy")) return .deploy;
     if (std.mem.eql(u8, value, "push")) return .push;
+    if (std.mem.eql(u8, value, "ps")) return .ps;
+    if (std.mem.eql(u8, value, "docs")) return .docs;
     if (std.mem.eql(u8, value, "logs")) return .logs;
     if (std.mem.eql(u8, value, "rollback")) return .rollback;
     if (std.mem.eql(u8, value, "doctor")) return .doctor;
@@ -39,6 +43,8 @@ pub fn run(allocator: std.mem.Allocator) !void {
         .init => try orchestrator.runInit(allocator, args[2..]),
         .deploy => try orchestrator.runDeploy(allocator, args[2..]),
         .push => try orchestrator.runPush(allocator, args[2..]),
+        .ps => try orchestrator.runPs(allocator, args[2..]),
+        .docs => try orchestrator.runDocs(allocator, args[2..]),
         .logs => try orchestrator.runLogs(allocator, args[2..]),
         .rollback => try orchestrator.runRollback(allocator, args[2..]),
         .doctor => try orchestrator.runDoctor(allocator, args[2..]),
@@ -59,6 +65,8 @@ fn printHelp() !void {
         \\  init <user@host>           Bootstrap a machine with vesseld
         \\  deploy [--no-push]         Deploy from compose.yaml and vessel.toml
         \\  push <image> <user@host>   Push image with vegistry tunnel flow
+        \\  ps                         List services/tasks status
+        \\  docs lint                  Validate Diataxis docs layout
         \\  logs <service>             Stream service logs
         \\  rollback [revision]        Roll back to previous revision
         \\  doctor                     Run diagnostics
@@ -71,6 +79,8 @@ fn printHelp() !void {
 
 test "parse command" {
     try std.testing.expectEqual(Command.init, parseCommand("init"));
+    try std.testing.expectEqual(Command.ps, parseCommand("ps"));
+    try std.testing.expectEqual(Command.docs, parseCommand("docs"));
     try std.testing.expectEqual(Command.help, parseCommand("unknown"));
 }
 
