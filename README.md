@@ -1,6 +1,6 @@
 # Vessel
 
-Vessel is a lightweight, CLI-first platform for shipping containerized apps to remote machines without Kubernetes overhead.
+Vessel is a lightweight, CLI-first platform for shipping containerized apps to remote and local machines without Kubernetes overhead.
 
 ## Binaries
 
