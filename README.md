@@ -2,6 +2,19 @@
 
 Vessel is a lightweight, CLI-first platform for shipping containerized apps to remote and local machines without Kubernetes overhead.
 
+Vessel is designed around the iperative command model. If you’d also like the freedom to move between cloud and your own hardware, or even mix the two, Vessel is for you
+
+## Features
+
+- PaaS-like workflow on your own servers
+- No vendor lock-in or platform dependencies
+- SSH into machines and debug with standard tools
+- Build, push, and deploy with one command
+- No image registry required
+- Zero-downtime rolling deployments
+- Scale replicas across machines
+- Automatic HTTPS via Let's Encrypt
+
 ## Binaries
 
 - `vessel`: operator CLI
